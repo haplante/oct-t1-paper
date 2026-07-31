@@ -10,7 +10,7 @@ project:
       ref: HEAD # Production will override this.
   authors:
     - name: Hugo Albert Plante
-      orcid: 0000-0001-7283-271X
+      orcid: 0009-0008-9235-0097
       affiliations: polymtl; mhi
       corresponding: true
       email: agah.karakuzu@polymtl.ca
@@ -71,8 +71,6 @@ project:
   bibliography:
     - paper.bib
   resources:
-    - content/opticnerve_core.py
-    - content/Dash_client.py
 site:
   template: article-theme # Or book-theme
   options:
