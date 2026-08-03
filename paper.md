@@ -1,11 +1,27 @@
----
-numbering:
-  heading_2: false
-  figure:
-    template: Fig. %s
----
+
 
 ## Dashboard
+
+Also wrong content ordering. You start with `# Introduction`. `## Dashboard` can be a sub-section under `# Results`. 
+
+:::: {warning}
+This is how you embed an external resource in MyST.
+
+:::{iframe} https://shinybrain.db.neurolibre.org
+:width: 100%
+:label: intdashboard
+:align: center
+
+MRShiny Brain interactive dashboard at [https://shinybrain.db.neurolibre.org](https://shinybrain.db.neurolibre.org)
+:::
+
+::::
+
+
+::: {warning}
+ The HTML convention below is not OK, too many CSS hacks that are not needed and also not MyST:
+:::
+
 
 <div class="figbox" style="max-width:1536px; aspect-ratio:2.075/1;">
 <iframe src="http://localhost:8050" style="width:100%; height:100%; border:0;"></iframe>
@@ -18,9 +34,14 @@ numbering:
 
 ## Introduction
 
-The optic nerve plays a central role in visual processing by transmitting neural signals from retinal ganglion cells to the lateral geniculate nucleus and onward to the visual cortex. Efficient conduction along this pathway depends on densely packed, highly organized, and heavily myelinated axons (Waxman, 1980). Owing to its small diameter, high myelin content, and functional specialization, the optic nerve represents a compelling model for studying the impact of white-matter integrity in vivo (Hoch et al., 2017).
+::: {warning} Citations
+ I showed two examples, please follow that convention to properly cite resources. 
+:::
 
-Traditional clinical assessment of optic nerve integrity relies on fundus imaging and, increasingly, optical coherence tomography (OCT) (Shin and Costello 2024). OCT enables quantitative measurement of retinal nerve fiber layer (RNFL) and ganglion cell complex (GCC/IPL) thickness, which serve as established surrogate biomarkers of retinal ganglion cell axonal density and integrity (Sakata et al. 2009; Galetta et al. 2011; Petzold et al. 2010; Shin and Costello 2024). However, retinal ganglion cell axons are unmyelinated within the eye and only become myelinated posterior to the lamina cribrosa (Bristow et al., 2002). As a result, OCT measurements, which are limited to the retina and optic nerve head, provide information about retinal axonal structure but not about myelin within the intraorbital optic nerve. Ideally, biomarkers of optic nerve integrity should capture both axonal and myelin content, as each contributes to visual function and may be differentially affected across neurological and ophthalmic diseases. 
+
+The optic nerve plays a central role in visual processing by transmitting neural signals from retinal ganglion cells to the lateral geniculate nucleus and onward to the visual cortex. Efficient conduction along this pathway depends on densely packed, highly organized, and heavily myelinated axons [@waxman1980]. Owing to its small diameter, high myelin content, and functional specialization, the optic nerve represents a compelling model for studying the impact of white-matter integrity in vivo (Hoch et al., 2017).
+
+Traditional clinical assessment of optic nerve integrity relies on fundus imaging and, increasingly, optical coherence tomography (OCT) [](https://doi.org/10.1038/s41433-024-03165-3). OCT enables quantitative measurement of retinal nerve fiber layer (RNFL) and ganglion cell complex (GCC/IPL) thickness, which serve as established surrogate biomarkers of retinal ganglion cell axonal density and integrity (Sakata et al. 2009; Galetta et al. 2011; Petzold et al. 2010; Shin and Costello 2024). However, retinal ganglion cell axons are unmyelinated within the eye and only become myelinated posterior to the lamina cribrosa (Bristow et al., 2002). As a result, OCT measurements, which are limited to the retina and optic nerve head, provide information about retinal axonal structure but not about myelin within the intraorbital optic nerve. Ideally, biomarkers of optic nerve integrity should capture both axonal and myelin content, as each contributes to visual function and may be differentially affected across neurological and ophthalmic diseases. 
 
 Among OCT-derived measurements, the macular ganglion cell complex (GCC) within the central 1–3 mm annulus and the global peripapillary retinal nerve fiber layer (RNFL) average are of particular interest. Histological studies have shown that retinal ganglion cell axon density peaks near 1 mm from the foveal center and remains highest within the parafoveal region, making GCC 1–3 mm a sensitive marker of ganglion cell integrity (Curcio and Allen, 1990). The global RNFL average complements this measure by capturing the thickness of axons from the entire retina as they converge to form the optic nerve, providing a representative measure of overall retinal axonal content. 
 
