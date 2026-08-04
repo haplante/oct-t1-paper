@@ -4,21 +4,10 @@ numbering:
   figure:
     template: Fig. %s
 ---
-
-## Dashboard
-
-<div class="figbox" style="max-width:1536px; aspect-ratio:2.075/1;">
-<iframe src="http://localhost:8050" style="width:100%; height:100%; border:0;"></iframe>
-</div>
-
-<p style="text-align:center; margin:0.75em 0 1.5em;">
-<a class="dashbtn" href="http://localhost:8050/" target="_blank" rel="noopener">Open dashboard in a new tab ↗</a>
-</p>
-
-
 ## Introduction
 
 The optic nerve plays a central role in visual processing by transmitting neural signals from retinal ganglion cells to the lateral geniculate nucleus and onward to the visual cortex. Efficient conduction along this pathway depends on densely packed, highly organized, and heavily myelinated axons (Waxman, 1980). Owing to its small diameter, high myelin content, and functional specialization, the optic nerve represents a compelling model for studying the impact of white-matter integrity in vivo (Hoch et al., 2017).
+
 
 Traditional clinical assessment of optic nerve integrity relies on fundus imaging and, increasingly, optical coherence tomography (OCT) (Shin and Costello 2024). OCT enables quantitative measurement of retinal nerve fiber layer (RNFL) and ganglion cell complex (GCC/IPL) thickness, which serve as established surrogate biomarkers of retinal ganglion cell axonal density and integrity (Sakata et al. 2009; Galetta et al. 2011; Petzold et al. 2010; Shin and Costello 2024). However, retinal ganglion cell axons are unmyelinated within the eye and only become myelinated posterior to the lamina cribrosa (Bristow et al., 2002). As a result, OCT measurements, which are limited to the retina and optic nerve head, provide information about retinal axonal structure but not about myelin within the intraorbital optic nerve. Ideally, biomarkers of optic nerve integrity should capture both axonal and myelin content, as each contributes to visual function and may be differentially affected across neurological and ophthalmic diseases. 
 
@@ -38,10 +27,16 @@ Despite these advances, few studies have directly related OCT-derived measures o
 
 ## Results
 
-MP2RAGE-derived T1 values were successfully quantified along the first 15 mm of the intraorbital optic nerve in all participants. T1 measurements were extracted using a skeleton-based segmentation, in which a single voxel located at the center of the optic nerve was sampled on each coronal slice, as illustrated in Figure 4. Visual inspection of the resulting longitudinal profiles within the interactive dashboard  demonstrated smooth T1 variation along the nerve, without abrupt transitions or discontinuities (Figure 1). Mean T1 values progressively decreased from the anterior (0–5 mm, 1005 ± 150 ms) to the middle (5–10 mm, 874 ± 136 ms) and posterior (10–15 mm, 855 ± 120 ms) segments, yielding an overall mean T1 of 911 ± 129 ms across the full 0–15 mm intraorbital segment. Left and right optic nerves exhibited visually similar profiles. The dashboard allows individual participants to be included or excluded, enabling visual assessment of the influence of each subject on the T1 profiles and subsequent OCT–T1 associations. 
+### Dashboard
 
-:::{note} Click the power icon in this figure's corner to attach a runtime, then click the run (▶️) button that appears to make it interactive. Until then it shows a static snapshot.
+:::{iframe} https://oct-t1-dashboard.onrender.com
+:width: 100%
+:label intdashboard
+:align: center
+OCT-T1 interactive dashboard at https://oct-t1-dashboard.onrender.com
 :::
+
+MP2RAGE-derived T1 values were successfully quantified along the first 15 mm of the intraorbital optic nerve in all participants. T1 measurements were extracted using a skeleton-based segmentation, in which a single voxel located at the center of the optic nerve was sampled on each coronal slice, as illustrated in Figure 4. Visual inspection of the resulting longitudinal profiles within the interactive dashboard  demonstrated smooth T1 variation along the nerve, without abrupt transitions or discontinuities (Figure 1). Mean T1 values progressively decreased from the anterior (0–5 mm, 1005 ± 150 ms) to the middle (5–10 mm, 874 ± 136 ms) and posterior (10–15 mm, 855 ± 120 ms) segments, yielding an overall mean T1 of 911 ± 129 ms across the full 0–15 mm intraorbital segment. Left and right optic nerves exhibited visually similar profiles. The dashboard allows individual participants to be included or excluded, enabling visual assessment of the influence of each subject on the T1 profiles and subsequent OCT–T1 associations. 
 
 :::{figure} #fig1cell
 :label: fig1
@@ -53,9 +48,6 @@ T₁ profile along the optic nerve (OD/OS group means ± SD, faint per-eye trace
 To quantify these observations, a linear mixed-effects model was fitted with position, side, and their interaction as fixed effects and subject as a random intercept. T1 decreased significantly with increasing distance from the optic disc (β = −14 ms/mm, p < 0.001). Neither the effect of side (β = 3 ms, p = 0.88) nor the side-by-position interaction (p = 0.60) reached statistical significance, indicating comparable longitudinal T1 profiles in both optic nerves. 
 
 We next examined the relationship between intraorbital optic nerve T1 and OCT-derived retinal thickness measurements. We first focused on the GCC All (1–3 mm) average and the global RNFL average because they provide global summary measures of the macular ganglion cell complex and the peripapillary retinal nerve fiber layer, respectively. Scatter plots in Figure 2 display ordinary least-squares regression, and all reported associations remained significant following FDR correction.  In the dashboard, these regression panels can be updated interactively by selecting different OCT sectors, T1 segments, or displayed statistics. 
-
-:::{note} Click the power icon in this figure's corner to attach a runtime, then click the run (▶️) button that appears to make it interactive. Until then it shows a static snapshot.
-:::
 
 :::{figure} #fig2cell
 :label: fig2
@@ -71,9 +63,6 @@ To determine whether these relationships depended on the location along the opti
 For both GCC All (1–3 mm) and global RNFL average, the proportion of explained variance increased toward the posterior optic nerve, while regression slopes remained comparable across segments,  with overlapping 95% confidence intervals. Together, these findings indicate that the relationship between retinal thickness and optic nerve T1 is present throughout the first 15 mm of the intraorbital optic nerve and is consistently stronger for macular GCC than for global RNFL measurements. 
 
 Although the GCC All (1–3 mm) average and global RNFL average provided the strongest overall associations, these summary measures do not indicate whether the relationship is uniformly distributed across the retina. We therefore examined the association between optic nerve T1 and each individual retinal sector.
-
-:::{note} Click the power icon in this figure's corner to attach a runtime, then click the run (▶️) button that appears to make it interactive. Until then it shows a static snapshot.
-:::
 
 :::{figure} #fig3cell
 :label: fig3
