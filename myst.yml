@@ -58,7 +58,7 @@ project:
     - reproducible publishing
     - mystmd
     - next-gen preprints
-  github: https://github.com/neurolibre/mystical-article
+  github: https://github.com/haplante/oct-t1-paper
   banner: static/banner.jpg
   venue: Neurolibre #Production will override this.
   subject: Living Preprint # Production will override this.
@@ -83,4 +83,3 @@ site:
     style: static/paper.css # .figbox rules for the live figure embeds.
     favicon: static/favicon.ico # Production will override this for branding.
     logo: static/logo.png # Production will override this for branding.
-    twitter: neurolibre
