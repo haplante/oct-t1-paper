@@ -3,8 +3,7 @@ version: 1
 project:
   title: 'Strong Coupling of Retinal Thickness and Optic Nerve Myelin in Vivo'
   github: https://github.com/haplante/oct-t1-paper
-  jupyter: true
-  thebe:
+  jupyter:
     binder:
       url: https://terrarium.evidencepub.io
       ref: main
