@@ -7,7 +7,6 @@ project:
     binder:
       url: https://terrarium.evidencepub.io
       repo: haplante/oct-t1-paper
-      ref: wired-paper # Production will override this.
   authors:
     - name: Hugo Albert Plante
       orcid: 0009-0008-9235-0097
@@ -66,7 +65,11 @@ project:
     content: CC-BY-4.0
     code: MIT
   abbreviations:
-    MyST: Markedly Structured Markdown
+    GCC: Ganglion Cell Complex
+    OCT: Optical Coherence Tomography
+    RFNL: Retinal Nerve Fiber Layer
+    IPL: Inner Plexiform Layer
+    MRI: Magnetic Resonance Imaging
   bibliography:
     - paper.bib
   resources:
