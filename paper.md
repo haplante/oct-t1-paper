@@ -1,45 +1,13 @@
-
-
-## Dashboard
-
-Also wrong content ordering. You start with `# Introduction`. `## Dashboard` can be a sub-section under `# Results`. 
-
-:::: {warning}
-This is how you embed an external resource in MyST.
-
-:::{iframe} https://shinybrain.db.neurolibre.org
-:width: 100%
-:label: intdashboard
-:align: center
-
-MRShiny Brain interactive dashboard at [https://shinybrain.db.neurolibre.org](https://shinybrain.db.neurolibre.org)
-:::
-
-::::
-
-
-::: {warning}
- The HTML convention below is not OK, too many CSS hacks that are not needed and also not MyST:
-:::
-
-
-<div class="figbox" style="max-width:1536px; aspect-ratio:2.075/1;">
-<iframe src="http://localhost:8050" style="width:100%; height:100%; border:0;"></iframe>
-</div>
-
-<p style="text-align:center; margin:0.75em 0 1.5em;">
-<a class="dashbtn" href="http://localhost:8050/" target="_blank" rel="noopener">Open dashboard in a new tab ↗</a>
-</p>
-
-
+---
+numbering:
+  heading_2: false
+  figure:
+    template: Fig. %s
+---
 ## Introduction
 
-::: {warning} Citations
- I showed two examples, please follow that convention to properly cite resources. 
-:::
+The optic nerve plays a central role in visual processing by transmitting neural signals from retinal ganglion cells to the lateral geniculate nucleus and onward to the visual cortex. Efficient conduction along this pathway depends on densely packed, highly organized, and heavily myelinated axons (Waxman, 1980). Owing to its small diameter, high myelin content, and functional specialization, the optic nerve represents a compelling model for studying the impact of white-matter integrity in vivo (Hoch et al., 2017).
 
-
-The optic nerve plays a central role in visual processing by transmitting neural signals from retinal ganglion cells to the lateral geniculate nucleus and onward to the visual cortex. Efficient conduction along this pathway depends on densely packed, highly organized, and heavily myelinated axons [@waxman1980]. Owing to its small diameter, high myelin content, and functional specialization, the optic nerve represents a compelling model for studying the impact of white-matter integrity in vivo (Hoch et al., 2017).
 
 Traditional clinical assessment of optic nerve integrity relies on fundus imaging and, increasingly, optical coherence tomography (OCT) [](https://doi.org/10.1038/s41433-024-03165-3). OCT enables quantitative measurement of retinal nerve fiber layer (RNFL) and ganglion cell complex (GCC/IPL) thickness, which serve as established surrogate biomarkers of retinal ganglion cell axonal density and integrity (Sakata et al. 2009; Galetta et al. 2011; Petzold et al. 2010; Shin and Costello 2024). However, retinal ganglion cell axons are unmyelinated within the eye and only become myelinated posterior to the lamina cribrosa (Bristow et al., 2002). As a result, OCT measurements, which are limited to the retina and optic nerve head, provide information about retinal axonal structure but not about myelin within the intraorbital optic nerve. Ideally, biomarkers of optic nerve integrity should capture both axonal and myelin content, as each contributes to visual function and may be differentially affected across neurological and ophthalmic diseases. 
 
@@ -59,21 +27,34 @@ Despite these advances, few studies have directly related OCT-derived measures o
 
 ## Results
 
+### Dashboard
+
+:::{iframe} https://oct-t1-dashboard.onrender.com
+:width: 100%
+:label intdashboard
+:align: center
+OCT-T1 interactive dashboard at https://oct-t1-dashboard.onrender.com
+:::
+
 MP2RAGE-derived T1 values were successfully quantified along the first 15 mm of the intraorbital optic nerve in all participants. T1 measurements were extracted using a skeleton-based segmentation, in which a single voxel located at the center of the optic nerve was sampled on each coronal slice, as illustrated in Figure 4. Visual inspection of the resulting longitudinal profiles within the interactive dashboard  demonstrated smooth T1 variation along the nerve, without abrupt transitions or discontinuities (Figure 1). Mean T1 values progressively decreased from the anterior (0–5 mm, 1005 ± 150 ms) to the middle (5–10 mm, 874 ± 136 ms) and posterior (10–15 mm, 855 ± 120 ms) segments, yielding an overall mean T1 of 911 ± 129 ms across the full 0–15 mm intraorbital segment. Left and right optic nerves exhibited visually similar profiles. The dashboard allows individual participants to be included or excluded, enabling visual assessment of the influence of each subject on the T1 profiles and subsequent OCT–T1 associations. 
 
-<div class="figbox" style="max-width:555px; aspect-ratio:555/402;">
-<iframe src="http://localhost:8050/figure/fig1" style="width:100%; height:100%; border:0;"></iframe>
-</div>
-<div style="font-size:0.9em;color:#555;margin:0 0 1.5em;"><b>Figure 1.</b> T₁ profile along the optic nerve (OD/OS group means ± SD, faint per-eye traces behind). <span class="capbtn"><iframe src="http://localhost:8050/resetchip"></iframe></span></div>
+:::{figure} #fig1cell
+:label: fig1
+:placeholder: ./static/fig1.png
+
+T₁ profile along the optic nerve (OD/OS group means ± SD, faint per-eye traces behind).
+:::
 
 To quantify these observations, a linear mixed-effects model was fitted with position, side, and their interaction as fixed effects and subject as a random intercept. T1 decreased significantly with increasing distance from the optic disc (β = −14 ms/mm, p < 0.001). Neither the effect of side (β = 3 ms, p = 0.88) nor the side-by-position interaction (p = 0.60) reached statistical significance, indicating comparable longitudinal T1 profiles in both optic nerves. 
 
 We next examined the relationship between intraorbital optic nerve T1 and OCT-derived retinal thickness measurements. We first focused on the GCC All (1–3 mm) average and the global RNFL average because they provide global summary measures of the macular ganglion cell complex and the peripapillary retinal nerve fiber layer, respectively. Scatter plots in Figure 2 display ordinary least-squares regression, and all reported associations remained significant following FDR correction.  In the dashboard, these regression panels can be updated interactively by selecting different OCT sectors, T1 segments, or displayed statistics. 
 
-<div class="figbox" style="max-width:638px; aspect-ratio:638/285;">
-<iframe src="http://localhost:8050/figure/fig2" style="width:100%; height:100%; border:0;"></iframe>
-</div>
-<div style="font-size:0.9em;color:#555;margin:0 0 1.5em;"><b>Figure 2.</b> OCT–T₁ regression (macula GCC and optic-disc RNFL). Click an averages-table row or a Fig. 3 wedge to change the plotted sector. <span class="capbtn"><iframe src="http://localhost:8050/resetchip"></iframe></span></div>
+:::{figure} #fig2cell
+:label: fig2
+:placeholder: ./static/fig2.png
+
+OCT–T₁ regression (macula GCC and optic-disc RNFL). Click an averages-table row or a Fig. 3 wedge to change the plotted sector.
+:::
 
 For the GCC All (1–3 mm) average, greater retinal thickness was associated with lower optic nerve T1 across the full 0–15 mm intraorbital segment (R² = 0.81, pFDR < 0.05). A similar negative relationship was observed for the global RNFL average, although the association was weaker than for the macular GCC measurement (R² = 0.72, pFDR < 0.05). 
 
@@ -83,10 +64,12 @@ For both GCC All (1–3 mm) and global RNFL average, the proportion of explained
 
 Although the GCC All (1–3 mm) average and global RNFL average provided the strongest overall associations, these summary measures do not indicate whether the relationship is uniformly distributed across the retina. We therefore examined the association between optic nerve T1 and each individual retinal sector.
 
-<div class="figbox" style="max-width:638px; aspect-ratio:638/285;">
-<iframe src="http://localhost:8050/figure/fig3" style="width:100%; height:100%; border:0;"></iframe>
-</div>
-<div style="font-size:0.9em;color:#555;margin:0 0 1.5em;"><b>Figure 3.</b> OCT sector maps (macula GCC and optic-disc RNFL). Click a wedge to drive the Fig. 2 regression for that sector. <span class="capbtn"><iframe src="http://localhost:8050/resetchip"></iframe></span></div>
+:::{figure} #fig3cell
+:label: fig3
+:placeholder: ./static/fig3.png
+
+OCT sector maps (macula GCC and optic-disc RNFL). Click a wedge to drive the Fig. 2 regression for that sector.
+:::
 
 Within the macula, the GCC All (1–3 mm) average exhibited a strong association with optic nerve T1 (R² = 0.81, pFDR < 0.05). Among the individual sectors, the strongest association was observed in the nasal sector of the 1–3 mm annulus (R² = 0.82, pFDR < 0.05). Significant negative associations were also observed in the central 1 mm region (R² = 0.52, pFDR < 0.05) and in the superior, inferior, and nasal sectors of the outer 3–6 mm annulus (R² = 0.55–0.70, pFDR < 0.05). Although weaker, the temporal outer sector also reached statistical significance (R² = 0.42, pFDR < 0.05). Overall, the spatial distribution of association strengths demonstrated a clear regional pattern, with the strongest relationships localized to the parafoveal GCC, particularly within the nasal 1–3 mm annulus.
 

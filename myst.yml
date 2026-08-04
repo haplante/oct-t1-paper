@@ -3,11 +3,11 @@ version: 1
 project:
   title: 'Strong Coupling of Retinal Thickness and Optic Nerve Myelin in Vivo'
   subtitle:
-  thebe:
+  jupyter:
     binder:
       url: https://terrarium.evidencepub.io
-      repo: neurolibre/mystical-article # Production will override this.
-      ref: HEAD # Production will override this.
+      repo: haplante/oct-t1-paper
+      ref: wired-paper # Production will override this.
   authors:
     - name: Hugo Albert Plante
       orcid: 0009-0008-9235-0097
@@ -54,7 +54,7 @@ project:
     - reproducible publishing
     - mystmd
     - next-gen preprints
-  github: https://github.com/neurolibre/mystical-article
+  github: https://github.com/haplante/oct-t1-paper
   banner: static/banner.jpg
   venue: Neurolibre #Production will override this.
   subject: Living Preprint # Production will override this.
@@ -69,6 +69,10 @@ project:
     MyST: Markedly Structured Markdown
   bibliography:
     - paper.bib
+  resources:
+    - content/figure_1.ipynb
+    - content/figure_2.ipynb
+    - content/figure_3.ipynb
   toc:
     - file: paper.md
 site:
