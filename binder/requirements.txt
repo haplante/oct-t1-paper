@@ -1,0 +1,8 @@
+plotly
+pandas
+numpy
+requests
+ipywidgets==8.1.8
+ipykernel
+jupyter-client
+nbformat
