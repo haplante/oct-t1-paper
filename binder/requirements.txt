@@ -1,4 +1,5 @@
 plotly
+anywidget
 pandas
 numpy
 requests
