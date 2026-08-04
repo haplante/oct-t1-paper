@@ -2,8 +2,7 @@
 version: 1
 project:
   title: 'Strong Coupling of Retinal Thickness and Optic Nerve Myelin in Vivo'
-  subtitle:
-  jupyter:
+  thebe:
     binder:
       url: https://terrarium.evidencepub.io
       repo: haplante/oct-t1-paper
@@ -55,7 +54,7 @@ project:
     - next-gen preprints
   github: https://github.com/haplante/oct-t1-paper
   banner: static/banner.jpg
-  venue: Neurolibre #Production will override this.
+  venue: Evidence #Production will override this.
   subject: Living Preprint # Production will override this.
   numbering:
     headings: true
@@ -70,6 +69,10 @@ project:
     RFNL: Retinal Nerve Fiber Layer
     IPL: Inner Plexiform Layer
     MRI: Magnetic Resonance Imaging
+    CSF: Cerebrospinal Fluid
+    MP2RAGE: Magnetization Prepared 2 Rapid Gradient Echoes
+    T1: Longitudinal Magnetization Relaxation Time Constant
+    B1: Transmit Field
   bibliography:
     - paper.bib
   resources:
