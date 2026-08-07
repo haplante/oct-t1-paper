@@ -1,7 +1,7 @@
 # See docs at: https://mystmd.org/guide/frontmatter
 version: 1
 project:
-  title: 'Strong Coupling of Retinal Thickness and Optic Nerve T1 in Vivo'
+  title: 'Strong coupling of retinal thickness and optic nerve T1 in vivo'
   github: https://github.com/haplante/oct-t1-paper
   jupyter:
     binder:

@@ -1,6 +1,15 @@
-# Abstract
+---
+title: 'Strong coupling of retinal thickness and optic nerve T1 in vivo'
+numbering:
+  heading_1: false
+  heading_2: false
+  heading_3: false
+---
 
+
++++ { "part": "abstract" }
 Optical coherence tomography (OCT) robustly measures retinal ganglion cell (RGC) integrity. However, OCT cannot assess the integrity of RGC axons past the optic nerve head. Here we used MP2RAGE-derived T1 mapping to quantify the first 15 mm of the intraorbital optic nerve, and related it to OCT-derived retinal thickness in fourteen adults. T1 varied smoothly along the nerve, decreasing from anterior to posterior locations. Greater retinal thickness was associated with shorter optic nerve T1, with the 1-3 mm parafoveal RGC complex exhibiting the strongest correlation (R² = 0.84) and the global peripapillary RNFL exhibiting the weakest (R² = 0.75). These results are consistent with coupled variation in retinal axonal architecture and optic nerve myelin-related tissue content. An interactive dashboard was created so results can be explored along the entire optic nerve segment and when in- and excluding participants clinically diagnosed with retinal disorders. Our findings suggest that OCT-based layer thickness and MRI-based T1 relaxation time are complementary measures of RGC integrity. 
++++
 
 :::: {important} OCT-T1 interactive dashboard
 
