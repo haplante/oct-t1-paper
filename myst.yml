@@ -100,8 +100,6 @@ project:
     - reproducible publishing
     - mystmd
     - next-gen preprints
-  substitutions:
-    - T1: "T$_1$"  
   banner: static/banner.jpg
   venue: Evidence #Production will override this.
   subject: Living Preprint # Production will override this.
@@ -120,7 +118,7 @@ project:
     MRI: Magnetic Resonance Imaging
     CSF: Cerebrospinal Fluid
     MP2RAGE: Magnetization Prepared 2 Rapid Gradient Echoes
-    T1: Longitudinal Magnetization Relaxation Time Constant
+    T₁: Longitudinal Magnetization Relaxation Time Constant
     B1: Transmit Field
   bibliography:
     - paper.bib
