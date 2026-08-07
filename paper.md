@@ -1,15 +1,30 @@
+---
+title: 'Strong coupling of retinal thickness and optic nerve T1 in vivo'
+numbering:
+  heading_1: false
+  heading_2: false
+  heading_3: false
+---
+
+
++++ { "part": "abstract" }
+Optical coherence tomography (OCT) robustly measures retinal ganglion cell (RGC) integrity. However, OCT cannot assess the integrity of RGC axons past the optic nerve head. Here we used MP2RAGE-derived T1 mapping to quantify the first 15 mm of the intraorbital optic nerve, and related it to OCT-derived retinal thickness in fourteen adults. T1 varied smoothly along the nerve, decreasing from anterior to posterior locations. Greater retinal thickness was associated with shorter optic nerve T1, with the 1-3 mm parafoveal RGC complex exhibiting the strongest correlation (R² = 0.84) and the global peripapillary RNFL exhibiting the weakest (R² = 0.75). These results are consistent with coupled variation in retinal axonal architecture and optic nerve myelin-related tissue content. An interactive dashboard was created so results can be explored along the entire optic nerve segment and when in- and excluding participants clinically diagnosed with retinal disorders. Our findings suggest that OCT-based layer thickness and MRI-based T1 relaxation time are complementary measures of RGC integrity. 
++++
+
+:::: {important} OCT-T1 interactive dashboard
+
 :::{iframe} https://oct-t1-dashboard.onrender.com
 :width: 100%
 :align: center
 :enumerated: false
-OCT-T1 interactive dashboard at https://oct-t1-dashboard.onrender.com
+
 :::
 
-## Abstract
+{button}`Open in new tab <https://oct-t1-dashboard.onrender.com>`
 
-Optical coherence tomography (OCT) robustly measures retinal ganglion cell (RGC) integrity. However, OCT cannot assess the integrity of RGC axons past the optic nerve head. Here we used MP2RAGE-derived T1 mapping to quantify the first 15 mm of the intraorbital optic nerve, and related it to OCT-derived retinal thickness in fourteen adults. T1 varied smoothly along the nerve, decreasing from anterior to posterior locations. Greater retinal thickness was associated with shorter optic nerve T1, with the 1-3 mm parafoveal RGC complex exhibiting the strongest correlation (R² = 0.84) and the global peripapillary RNFL exhibiting the weakest (R² = 0.75). These results are consistent with coupled variation in retinal axonal architecture and optic nerve myelin-related tissue content. An interactive dashboard was created so results can be explored along the entire optic nerve segment and when in- and excluding participants clinically diagnosed with retinal disorders. Our findings suggest that OCT-based layer thickness and MRI-based T1 relaxation time are complementary measures of RGC integrity. 
+::::
 
-## Introduction
+# Introduction
 
 The optic nerve plays a central role in visual processing by transmitting neural signals from retinal ganglion cells to the lateral geniculate nucleus and onward to the visual cortex. Efficient conduction along this pathway requires densely packed, highly organized, and heavily myelinated axons [](http://dx.doi.org/10.1002/mus.880030207). Owing to its small diameter, high myelin content, and functional specialization, the optic nerve represents a compelling model for studying the impact of white-matter integrity in vivo [](http://dx.doi.org/10.1097/WNO.0000000000000511).
 
@@ -29,7 +44,7 @@ Quantitative T1 has been widely investigated as a surrogate marker of myelin con
 
 Despite these advances, few studies have directly related OCT-derived measures of retinal structure to quantitative MRI markers of optic nerve microstructure, and in vivo validation of any candidate MRI myelin marker against an independent structural measure remains scarce [](https://doi.org/10.1002/mrm.24571); [](https://doi.org/10.1093/brain/awh076); [](https://doi.org/10.1016/j.jns.2025.123401); [](https://doi.org/10.1177/1352458507076952); [](https://doi.org/10.1016/j.neuroimage.2005.09.024). Here, we used MP2RAGE-derived T1 mapping to quantify the intraorbital optic nerve and examined its relationship with OCT-derived retinal thickness measurements in the macula and around the optic disc. We hypothesized that intraorbital optic nerve T1 would show region-specific associations with OCT measurements, supporting the biological coupling between retinal axonal architecture and optic nerve microstructure, and highlighting the potential of T1 mapping as a non-invasive bridge between retinal and neural measures of white-matter integrity.
 
-## Results
+# Results
 
 MP2RAGE-derived T1 values were successfully quantified along the first 15 mm of the intraorbital optic nerve in all participants. T1 measurements were extracted using a skeleton-based segmentation, in which a single voxel located at the center of the optic nerve was sampled on each coronal slice, as illustrated in [](#fig4). Visual inspection of the resulting longitudinal profiles within the interactive dashboard demonstrated smooth T1 variation along the nerve, without abrupt transitions or discontinuities ([](#fig1)). Mean T1 values progressively decreased from the anterior (0–5 mm, 1005 ± 150 ms) to the middle (5–10 mm, 874 ± 136 ms) and posterior (10–15 mm, 855 ± 120 ms) segments, yielding an overall mean T1 of 911 ± 129 ms across the full 0–15 mm intraorbital segment. Left and right optic nerves exhibited visually similar profiles. The accompanying interactive dashboard allows individual participants to be included or excluded, enabling visual assessment of the influence of each subject on the T1 profiles and subsequent OCT–T1 associations.
 
@@ -81,7 +96,7 @@ Participant `sub-0480`, shown in the penultimate column of [](#fig4), was clinic
 
 No other participant or eye was flagged as an outlier, an influential observation, or a high-leverage observation in any segment under either analysis. Together, these results indicate that the coupling between retinal thickness and optic nerve T1 is not attributable to individual observations, while identifying one participant whose anterior optic nerve T1 was elevated relative to retinal structure.
 
-## Discussion
+# Discussion
 
 In this study, we combined OCT- and MRI-based measurements to examine the relationship between retinal axonal structure and intraorbital optic nerve microstructure in vivo. Using MP2RAGE-derived T1 mapping and skeleton-based optic nerve sampling, we demonstrated that quantitative T1 can provide spatially coherent characterization of the first 15 mm of the intraorbital optic nerve. T1 values varied smoothly along the nerve without abrupt discontinuities, supporting the robustness of the sampling approach and suggesting that the measurements captured organized longitudinal variation rather than unstable segmentation or local image artifacts. 
 
@@ -115,7 +130,7 @@ This combined approach may be particularly relevant in multiple sclerosis, where
 
 Overall, these findings demonstrate that MP2RAGE-derived T1 mapping, combined with skeleton-based intraorbital optic nerve sampling, provides a stable and biologically coherent measure of optic nerve microstructure in vivo. The negative association between T1 and OCT-derived retinal thickness, particularly within the parafoveal GCC, supports a coupling between retinal axonal architecture and optic nerve tissue composition. The persistence of the main association after exclusion of outlying observations further supports the robustness of this relationship. Future studies should evaluate test–retest reproducibility, age effects, longitudinal sensitivity, and clinical applicability in demyelinating and neurodegenerative optic neuropathies, where combined MRI–OCT assessment may offer complementary insight into axonal and myelin-related injury.
 
-## Methods
+# Methods
 
 A total of fifteen participants (n=15) were scanned on a 3T scanner (Siemens Prisma, Germany) using a 32-channel head coil. Written informed consent was obtained from all participants. Thirteen participants (9 female, 4 male, ages 19–43) had no history of neurological or ophthalmological disease. One female participant (sub-0803, age 69) had moderate visual impairment associated with clinically diagnosed glaucoma caused by pseudoexfoliation syndrome. One final female participant (sub-0480, age 52) had severe visual impairment including color blindness, lack of stereoscopic depth perception, and best corrected visual acuity of 20/160 due to atrophy of both optic nerves without signs of mass or abnormal enhancement. As commonly seen in patients with unexplained optic nerve atrophy, the internal carotid arteries in close proximity to the optic nerves appeared slightly elongated (dolichoectatic) in this participant. For all participants, data from both eyes were analyzed.
 
@@ -159,7 +174,4 @@ For each fitted model, the marginal coefficient of determination R²<sub>margina
 
 Influential observations were identified in both analyses. For the participant-level OLS fits, externally studentized residuals, Cook's distance, and leverage were computed; observations were flagged as outliers when the absolute studentized residual exceeded 2.5, as influential when Cook's distance exceeded 4/n, and as high-leverage when leverage exceeded 2p/n. For the eye-level mixed-effects models, standardized conditional and EBLUP residuals were computed following the framework for residual analysis in linear mixed models [](https://doi.org/10.1002/bimj.200610341). Conditional residuals quantify the deviation of each eye from its model-predicted value after accounting for both the fixed effect of retinal thickness and the participant-level random intercept, whereas EBLUP residuals identify participants whose random intercept deviates from the population distribution; observations and participants with absolute standardized residuals greater than 2 were flagged. Normality of the error structure was verified using the Shapiro–Wilk test applied to least-confounded residuals. Both sets of diagnostics were repeated for each T1 segment, and for all flagged observations the underlying OCT and T1 values were examined to determine whether the deviation reflected atypical measurements or a mismatch between the two measures.
 
-## References
-
-:::{bibliography}
-:::
+# References
