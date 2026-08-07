@@ -1,7 +1,7 @@
 # See docs at: https://mystmd.org/guide/frontmatter
 version: 1
 project:
-  title: 'Strong Coupling of Retinal Thickness and Optic Nerve Myelin in Vivo'
+  title: 'Strong Coupling of Retinal Thickness and Optic Nerve T1 in Vivo'
   github: https://github.com/haplante/oct-t1-paper
   jupyter:
     binder:
@@ -11,15 +11,43 @@ project:
   authors:
     - name: Hugo Albert Plante
       orcid: 0009-0008-9235-0097
+      github: haplante
+      email: hugo.albert-plante@etud.polymtl.ca
       affiliations: polymtl
+      corresponding: true
     - name: Agah karakuzu
       orcid: 0000-0001-7283-271X
       affiliations: polymtl; mhi
       email: agah.karakuzu@polymtl.ca
       twitter: agahkarakuzu
       url: https://agah.dev
+    - name: Ameen Qadi
+      orcid: 0000-0000-0000-0000
+      email: ameenqadi05@gmail.com
+      affiliations: psychologynyuabudhabi; centerbrainhealthnyuabudhabi
+    - name: Mathieu Boudreau
+      orcid: 0000-0002-7726-4456
+      affiliations: polymtl;
+      email: mathieu.boudreau@polymtl.ca
+      github: mathieuboudreau
+    - name: Namrata Bangera
+      orcid: 0000-0000-0000-0000
+      email: nb4131@nyu.edu
+      affiliations: psychologynyuabudhabi; centerbrainhealthnyuabudhabi
+    - name: Abraiz Azhar
+      orcid: 0000-0000-0000-0000
+      email: mk7592@nyu.edu
+      affiliations: psychologynyuabudhabi; centerbrainhealthnyuabudhabi
+    - name: Morane Bienvenu
+      affiliations: polymtl
+      email: morane-cecile.bienvenu@etud.polymtl.ca
+    - name: Bas Rokers
+      orcid: 0000-0000-0000-0000
+      email: br87@nyu.edu
+      affiliations: psychologynyuabudhabi; centerbrainhealthnyuabudhabi
     - name: Nikola Stikov
       orcid: 0000-0002-8480-5230
+      email: stikov@gmail.com
       affiliations: polymtl; mhi; macedonia
   affiliations:
     - id: polymtl
@@ -33,6 +61,24 @@ project:
       country: Canada
       postal_code: H3T 1J4
       phone: 1 (514) 340-4711
+    - id: psychologynyuabudhabi
+      institution: Psychology, New York University Abu Dhabi
+      ror: https://ror.org/00e5k0821
+      isni: 0000 0004 1755 5934
+      department: Psychology
+      address: Saadiyat Marina District
+      city: Abu Dhabi
+      country: United Arab Emirates
+      postal_code: 139188
+    - id: centerbrainhealthnyuabudhabi
+      institution: Center for Brain and Health, New York University Abu Dhabi
+      ror: https://ror.org/00e5k0821
+      isni: 0000 0004 1755 5934
+      department: Center for Brain and Health
+      address: Saadiyat Marina District
+      city: Abu Dhabi
+      country: United Arab Emirates
+      postal_code: 139188
     - id: mhi
       institution: Montreal Heart Institute
       ror: https://ror.org/03vs03g62
