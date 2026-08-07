@@ -77,6 +77,13 @@ class OpticNerveClient:
         """Update the figure with new parameters."""
         return self._post(figid, params)
 
+    def _show_static(self, figid, **params):
+        response = self.generate_plots(figid, **params)
+        if not response:
+            print("Could not load the figure.")
+            return
+        go.Figure(response["figure"]).show(config=_graph_cfg(figid))
+
     # ========================================================================
     # VISUALIZATIONS METHODS
     # ========================================================================
@@ -100,7 +107,9 @@ class OpticNerveClient:
             display(fig)
             return fig
 
-    def create_fig1_interface(self):
+    def create_fig1_interface(self, interactive=False):
+        if not interactive:
+            return self._show_static('fig1')
         """Build and display the Figure 1 panel (no controls, matches the dashboard)."""
         out = widgets.Output()
         self._render_into(out, 'fig1')
