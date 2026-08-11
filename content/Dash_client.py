@@ -56,13 +56,15 @@ _INJECTED_CSS = """
              width:fit-content !important; margin-left:auto !important; margin-right:auto !important; }
 .onp-frame iframe { border:0; display:block; border-radius:6px; }
 .onp-sync { display:none !important; }
-/* min-height (not height) so a full panel (fig2) can grow a little instead of
-   clipping; the 6px vertical margins inset it from the figure's edges. */
+/* height:auto + a px min-height set inline from FIG_SIZE (see _panel). A
+   percentage min-height here fed back into the grid row's own height and, when
+   the first layout pass ran before this CSS landed (Binder), locked the row at
+   an inflated fixed point -- panels ~500px tall next to 285px figures. */
 .onp-panel { font-family:Arial,Helvetica,sans-serif; background:#fff; border:1px solid #ddd;
              border-radius:6px; padding:6px 8px; margin:6px 6px 6px 0 !important; width:150px;
              box-sizing:border-box; overflow:hidden; gap:6px !important;
              --jp-widgets-inline-height: 18px;
-             height:auto !important; min-height:calc(100% - 12px) !important; }
+             height:auto !important; }
 .onp-panel > * { margin:0 !important; }
 /* Styled like the dashboard sidebar's .btnrow buttons; margin-top:auto pins it
    to the bottom of the panel with whatever breathing room is left. */
@@ -198,6 +200,10 @@ class OpticNerveClient:
         w = widgets.HTML()
         w.add_class("onp-frame")
         width, height = FIG_SIZE[figid]
+        # Explicit height: without it the widget's natural height is at the
+        # mercy of Thebe/Lumino layout feedback, which inflated the whole grid
+        # row (~500px rows around 285px figures on Binder).
+        w.layout = widgets.Layout(height=f"{height}px")
         # width via style (100% of the grid column, capped at native size) so the
         # row can shrink into a narrow article column instead of overflowing —
         # the page scales its canvas to fit whatever box it gets.
@@ -230,8 +236,12 @@ class OpticNerveClient:
             btn.add_class("onp-reset")
             btn.on_click(on_reset)
             children.append(btn)
+        # Explicit px min-height (figure height minus the 6px top/bottom
+        # margins): fills the figure's height like the dashboard sidebar, and
+        # unlike a percentage it cannot feed back into the grid row's height.
         box = widgets.VBox(children, layout=widgets.Layout(
-            align_items="stretch", overflow="hidden"))
+            align_items="stretch", overflow="hidden",
+            min_height=f"{FIG_SIZE[figid][1] - 12}px"))
         box.add_class("onp-panel")
         return box
 
