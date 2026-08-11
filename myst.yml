@@ -35,7 +35,7 @@ project:
       email: nb4131@nyu.edu
       affiliations: psychologynyuabudhabi; centerbrainhealthnyuabudhabi
     - name: Abraiz Azhar
-      orcid: 0000-0000-0000-0000
+      orcid: 0009-0009-7203-7439
       email: mk7592@nyu.edu
       affiliations: psychologynyuabudhabi; centerbrainhealthnyuabudhabi
     - name: Morane Bienvenu
@@ -97,6 +97,9 @@ project:
       country: North Macedonia
       postal_code: 1000
   keywords:
+    - optic nerve
+    - retinal thickness
+    - T1 mapping
     - reproducible publishing
     - mystmd
     - next-gen preprints
@@ -136,3 +139,4 @@ site:
   options:
     favicon: static/favicon.ico # Production will override this for branding.
     logo: static/logo.png # Production will override this for branding.
+    style: static/custom.css # Sizes the dashboard iframe's box to the dashboard's aspect.

@@ -1,37 +1,36 @@
 """
-Client for the OCT-T1 dashboard's stateless figure-generation API.
+Client for the OCT-T1 dashboard's standalone figure pages.
 
-Fetches Plotly figures from the live dashboard so these notebooks mirror it
-exactly (sizing, modebar, and each figure's own side option panel).
+Each figure is embedded as an <iframe> of the dashboard's own /figure/<figid>
+page (app.py serves these specifically for article embedding). The page runs
+the dashboard's real plotly.js in its own document, so it renders identically
+to the dashboard by construction — none of Thebe's plotly/ipywidgets rendering
+machinery is involved in drawing the figure. The ipywidgets side panel drives
+the figure by rewriting the iframe's query string; the page reads its params
+from the URL and re-renders itself.
 """
 
+import itertools
 import requests
-import plotly.graph_objects as go
-import plotly.io as pio
 import ipywidgets as widgets
-from IPython.display import display, HTML
-
-pio.renderers.default = "plotly_mimetype"
+from IPython.display import display, Javascript
+from urllib.parse import urlencode
+from html import escape as _esc
+import json as _json
 
 # Matches the dashboard's own default view (opticnerve_core.py DEFAULTS).
-DEFAULT_STAT = 'R2m'
-DEFAULT_MODE = 'avg'
 DEFAULT_MAC = 'All_1_3_gcc'
 DEFAULT_DISC = 'All_um_'
 DEFAULT_BAND = 'T1_mean_015'
 
-# Mirrors oct_t1_dashboard_only/opticnerve_core.py FIG_SIZE and app.py's
-# PNG_SCALE/GRAPH_CFG so these figures match the dashboard panels exactly
-# (size + modebar). Duplicated rather than imported: separate repo.
+# On-page iframe size per figure. The /figure/<figid> page scales its native
+# canvas to fit whatever box it gets (object-fit:contain style), so this only
+# chooses display size — the render itself is always the dashboard's own.
 FIG_SIZE = {"fig1": (393, 285), "fig2": (638, 285), "fig3": (638, 285)}
-FIG_NAME = {"fig1": "fig01_T1_profile", "fig2": "fig02_regression", "fig3": "fig03_OCT_maps"}
-PNG_SCALE = 600 / 96
-MODEBAR_REMOVE = ["select2d", "lasso2d", "zoom2d", "pan2d", "zoomIn2d",
-                  "zoomOut2d", "autoScale2d", "resetScale2d"]
 
 # Option lists for the side panels below. Mirrors opticnerve_core.py's
-# MAC_METRICS/DISC_METRICS/T1_BANDS + NAMES/BAND_LABEL (duplicated for the
-# same reason as FIG_SIZE: separate repo, no shared import).
+# MAC_METRICS/DISC_METRICS/T1_BANDS + NAMES/BAND_LABEL (duplicated:
+# separate repo, no shared import).
 MAC_OPTIONS = [
     ("All_1_3_gcc", "GCC All (1–3 mm)"), ("All_3_6_gcc", "GCC All (3–6 mm)"),
     ("All_field_gcc", "GCC All Field"), ("Center_1_gcc", "GCC Center (1 mm)"),
@@ -50,67 +49,123 @@ BAND_OPTIONS = [
     ("T1_mean_510", "5–10 mm"), ("T1_mean_1015", "10–15 mm"),
 ]
 
-
-def _graph_cfg(figid):
-    w, h = FIG_SIZE[figid]
-    return dict(scrollZoom=False, displaylogo=False, displayModeBar=False, responsive=False,
-                modeBarButtonsToRemove=MODEBAR_REMOVE,
-                toImageButtonOptions=dict(format="png", filename=FIG_NAME[figid],
-                                          width=w, height=h, scale=PNG_SCALE))
-
-
-# One-time style injection: the dashboard rounds Fig 3's sector-stat chips via
-# plain CSS (Plotly has no border-radius option for annotation bgcolor boxes),
-# and its sidebar look (background, label sizing) is likewise plain CSS. Both
-# apply directly here since these are live Plotly.js/ipywidgets instances in
-# the notebook's own browser page.
-display(HTML("""<style>
-g.annotation rect { rx:6px; ry:6px; }
+# Side-panel styling (background, label sizing) — the figures themselves are
+# iframes and need no CSS from here.
+_INJECTED_CSS = """
+.onp-fig-grid.onp-fig-grid.onp-fig-grid { display:grid !important; align-items:stretch !important;
+             width:fit-content !important; margin-left:auto !important; margin-right:auto !important; }
+.onp-frame iframe { border:0; display:block; border-radius:6px; }
+.onp-sync { display:none !important; }
+/* min-height (not height) so a full panel (fig2) can grow a little instead of
+   clipping; the 6px vertical margins inset it from the figure's edges. */
 .onp-panel { font-family:Arial,Helvetica,sans-serif; background:#fff; border:1px solid #ddd;
-             border-radius:6px; padding:6px 8px; margin-left:0px; width:150px;
+             border-radius:6px; padding:6px 8px; margin:6px 6px 6px 0 !important; width:150px;
              box-sizing:border-box; overflow:hidden; gap:6px !important;
-             --jp-widgets-inline-height: 18px; }
+             --jp-widgets-inline-height: 18px;
+             height:auto !important; min-height:calc(100% - 12px) !important; }
 .onp-panel > * { margin:0 !important; }
+/* Styled like the dashboard sidebar's .btnrow buttons; margin-top:auto pins it
+   to the bottom of the panel with whatever breathing room is left. */
+.onp-panel .onp-reset { margin-top:auto !important; width:100%; height:20px;
+             background:#fff; color:#333; border:1px solid #bbb; border-radius:4px;
+             font-size:11px; cursor:pointer; }
+.onp-panel .onp-reset:hover { background:#e6e6ea; }
 .onp-panel .onp-title { font-size:12px; font-weight:bold; color:#333; }
 .onp-panel .onp-lbl { font-size:10px; color:#555; }
 .onp-panel select { font-size:10px !important; border-radius:4px; border:1px solid #ccc; color:#111;
-             height:18px !important; padding:0 2px !important; }
-.onp-panel .widget-dropdown { width:100% !important; height:18px !important; }
+             height:18px !important; padding:0 2px !important; background:#fff !important; }
+.onp-panel .widget-dropdown { width:100% !important; height:18px !important; background:#fff !important; }
 .onp-subjlist { display:grid; grid-template-columns:repeat(2, auto); grid-gap:0px 8px; margin-bottom:0; }
 .onp-subjlist .widget-checkbox { width:auto; height:14px; min-height:14px; margin:0; }
 .onp-subjlist .widget-checkbox input[type=checkbox] { width:10px; height:10px; margin:0 3px 0 0; }
 .onp-subjlist .widget-checkbox label { font-size:10px; line-height:14px; color:#1a5fb4; width:auto; }
-</style>"""))
+"""
+# display(HTML(...)) with a <style> tag gets its <style> stripped by Jupyter's
+# HTML sanitizer in the Thebe/MyST embed; a script-created <style> element
+# sidesteps that (script output isn't sanitized the same way).
+display(Javascript(f"""
+(function() {{
+    if (document.getElementById('onp-injected-style')) return;
+    var s = document.createElement('style');
+    s.id = 'onp-injected-style';
+    s.textContent = {_json.dumps(_INJECTED_CSS)};
+    document.head.appendChild(s);
+}})();
+"""))
+
+# Two-way bridge between the option panels (ipywidgets, this page) and the
+# figure iframes (the dashboard's /figure pages, cross-origin — postMessage is
+# the only channel that crosses that boundary):
+#   panel -> figure: render() swaps a hidden .onp-push span; this observer
+#     forwards its query into the grid's iframe, so the page re-renders in
+#     place instead of the iframe reloading.
+#   figure -> panel: the figure page posts {opticnerve, params} after every
+#     in-figure click; clicking the matching subject checkboxes notifies the
+#     kernel widgets, keeping the checkbox the single source of truth. The
+#     resulting kernel render pushes params the figure already has, which its
+#     receive() treats as a no-op — so this cannot loop.
+display(Javascript("""
+(function() {
+    if (window.__onpBridge) return;
+    window.__onpBridge = true;
+
+    new MutationObserver(function () {
+        document.querySelectorAll('.onp-push').forEach(function (n) {
+            if (n._sent) return; n._sent = true;
+            var grid = n.closest('.onp-fig-grid');
+            var f = grid && grid.querySelector('iframe');
+            if (!f || !f.contentWindow) return;
+            var params = {};
+            new URLSearchParams(n.dataset.query || '').forEach(function (v, k) { params[k] = v; });
+            f.contentWindow.postMessage({opticnerve: true, params: params}, '*');
+        });
+    }).observe(document.body, {childList: true, subtree: true});
+
+    window.addEventListener('message', function (e) {
+        var d = e.data || {};
+        if (!d.opticnerve || !d.params || typeof d.params.exclude !== 'string') return;
+        var excl = d.params.exclude.split(',').filter(Boolean);
+        // exclude is shared by every figure (the iframes already sync it among
+        // themselves via BroadcastChannel), so mirror it into every panel.
+        document.querySelectorAll('.onp-fig-grid .onp-subjlist').forEach(function (list) {
+            list.querySelectorAll('.widget-checkbox').forEach(function (cb) {
+                var input = cb.querySelector('input');
+                // ipywidgets prefixes the label with a zero-width space, which
+                // trim() does not remove -- strip zero-width chars explicitly.
+                var subj = cb.textContent.replace(/[\\u200b-\\u200d\\ufeff]/g, '').trim();
+                var want = excl.indexOf(subj) === -1;
+                if (input && input.checked !== want) input.click();
+            });
+        });
+    });
+})();
+"""))
 
 
 class OpticNerveClient:
-    """Client for the dashboard's stateless figure-generation API."""
+    """Embeds the dashboard's standalone /figure/<figid> pages, driven by an
+    ipywidgets option panel styled like the dashboard's sidebar."""
 
     def __init__(self, base_url="https://oct-t1-dashboard.onrender.com"):
         self.base_url = base_url
         self._subjects = None
+        self._push_n = itertools.count()
 
     # ========================================================================
-    # API Query Methods
+    # API
     # ========================================================================
 
-    def _post(self, figid, params):
-        payload = {"figid": figid, **params}
+    def generate_plots(self, figid, **params):
+        """Fetch a figure's JSON via the API (used only for subject discovery;
+        the figures themselves render in their own iframe)."""
         try:
-            resp = requests.post(f"{self.base_url}/api/generate_plots", json=payload, timeout=30)
+            resp = requests.post(f"{self.base_url}/api/generate_plots",
+                                 json={"figid": figid, **params}, timeout=30)
             resp.raise_for_status()
             return resp.json()
         except Exception as e:
             print(f"❌ Error generating plots: {e}")
             return None
-
-    def generate_plots(self, figid, **params):
-        """Generate a figure via the API."""
-        return self._post(figid, params)
-
-    def update_plots(self, figid, **params):
-        """Update the figure with new parameters."""
-        return self._post(figid, params)
 
     def _all_subjects(self):
         """Subject list, read off Figure 2's per-point customdata (subject IDs
@@ -127,44 +182,56 @@ class OpticNerveClient:
         return self._subjects
 
     # ========================================================================
-    # VISUALIZATIONS METHODS
+    # Iframe + panel plumbing
     # ========================================================================
 
-    def to_figure_widget(self, response, figid):
-        """Wrap a generate_plots/update_plots response in a FigureWidget,
-        configured with the same modebar the dashboard uses for that panel.
-        Resized to FIG_SIZE so that dict is the one place to change a
-        figure's on-page size (the dashboard always sends its own native size)."""
-        fig = go.FigureWidget(response["figure"])
-        w, h = FIG_SIZE[figid]
-        fig.update_layout(width=w, height=h)
-        fig._config = _graph_cfg(figid)
-        return fig
+    @staticmethod
+    def _query(params):
+        q = urlencode({k: v for k, v in params.items() if v})
+        return f"?{q}" if q else ""
 
-    def _render_into(self, out, figid, **params):
-        """Fetch + draw figid into out. Returns the new FigureWidget, or None."""
-        response = self.generate_plots(figid, **params)
-        with out:
-            out.clear_output(wait=True)
-            if not response:
-                print("Could not load the figure.")
-                return None
-            fig = self.to_figure_widget(response, figid)
-            display(fig)
-            return fig
+    def _frame(self, figid, **params):
+        """An HTML widget holding the figure iframe (loaded once), plus a hidden
+        companion widget (`_sync`) that later renders write new params into —
+        the injected bridge above forwards them via postMessage, so the figure
+        updates in place instead of the iframe reloading."""
+        w = widgets.HTML()
+        w.add_class("onp-frame")
+        width, height = FIG_SIZE[figid]
+        # width via style (100% of the grid column, capped at native size) so the
+        # row can shrink into a narrow article column instead of overflowing —
+        # the page scales its canvas to fit whatever box it gets.
+        w.value = (f'<iframe src="{self.base_url}/figure/{figid}{self._query(params)}" '
+                   f'title="OCT-T1 {figid}" '
+                   f'style="width:100%;max-width:{width}px;height:{height}px"></iframe>')
+        w._sync = widgets.HTML()
+        w._sync.add_class("onp-sync")
+        return w
 
-    def _panel(self, title, rows, figid):
-        """A side option panel styled like the dashboard's sidebar, sized to
-        match the figure's own height so the two sit flush with no scrollbar.
-        `rows` is a list of (label, widget) pairs."""
+    def _retarget(self, out, figid, **params):
+        # data-n makes every push unique: an unchanged value would not reach the
+        # frontend, and the figure may hold in-figure click state the panel's
+        # (identical) params still need to override — e.g. Reset after clicks.
+        out._sync.value = (f'<span class="onp-push" data-n="{next(self._push_n)}" '
+                           f'data-query="{_esc(self._query(params)[1:])}"></span>')
+
+    def _panel(self, title, rows, figid, on_reset=None):
+        """A side option panel styled like the dashboard's sidebar (the CSS
+        gives it the figure's height minus a small top/bottom inset).
+        `rows` is a list of (label, widget) pairs; `on_reset` adds a
+        reset-to-defaults button pinned at the bottom."""
         tight = widgets.Layout(height="14px", margin="0", padding="0")
         children = [widgets.HTML(f"<div class='onp-title'>{title}</div>", layout=tight)]
         for label, w in rows:
             children.append(widgets.HTML(f"<div class='onp-lbl'>{label}</div>", layout=tight))
             children.append(w)
-        height = FIG_SIZE[figid][1]
+        if on_reset is not None:
+            btn = widgets.Button(description="↺ Reset all")
+            btn.add_class("onp-reset")
+            btn.on_click(on_reset)
+            children.append(btn)
         box = widgets.VBox(children, layout=widgets.Layout(
-            align_items="stretch", height=f"{height}px", overflow="hidden"))
+            align_items="stretch", overflow="hidden"))
         box.add_class("onp-panel")
         return box
 
@@ -183,26 +250,57 @@ class OpticNerveClient:
         for b in boxes.values():
             b.observe(handler, names='value')
 
+    @staticmethod
+    def _resetter(render, subj_boxes, defaults):
+        """A reset handler + the guard `render` must check: resetting flips many
+        widget values at once, and without the guard each flip would fire its
+        observer and refetch the figure N times. `defaults` maps widget -> value."""
+        muted = [False]
+
+        def reset(_btn=None):
+            muted[0] = True
+            try:
+                for b in subj_boxes.values():
+                    b.value = True
+                for w, v in defaults.items():
+                    w.value = v
+            finally:
+                muted[0] = False
+            render()
+
+        return muted, reset
+
+    def _show(self, figid, frame, panel):
+        box = widgets.GridBox([frame, panel, frame._sync], layout=widgets.Layout(
+            grid_template_columns=f"minmax(0, {FIG_SIZE[figid][0]}px) auto"))
+        box.add_class("onp-fig-grid")
+        display(box)
+        return frame
+
+    # ========================================================================
+    # Figure interfaces
+    # ========================================================================
+
     def create_fig1_interface(self):
         """Figure 1 panel: subject exclusion only."""
-        out = widgets.Output()
         subj_grid, subj_boxes = self._subject_checklist()
+        frame = self._frame('fig1')
 
         def render(*_):
+            if muted[0]:
+                return
             exclude = ",".join(sorted(s for s, b in subj_boxes.items() if not b.value))
-            self._render_into(out, 'fig1', exclude=exclude)
+            self._retarget(frame, 'fig1', exclude=exclude)
 
+        muted, reset = self._resetter(render, subj_boxes, {})
         self._observe_all(subj_boxes, render)
-        render()
-        display(widgets.HBox([out, self._panel("Figure 1 options", [("Subjects", subj_grid)], "fig1")]))
-        return out
+        panel = self._panel("Figure 1 options", [("Subjects", subj_grid)], "fig1", on_reset=reset)
+        return self._show('fig1', frame, panel)
 
     def create_fig2_interface(self):
         """Figure 2 panel: subject exclusion, macula sector, disc sector, T1
-        sector. Clicking a point toggles that subject's checkbox in the panel
-        (and vice versa) — the checkbox is the single source of truth for
-        who's excluded, exactly like the dashboard's sidebar checklist."""
-        out = widgets.Output()
+        sector. Points and band chips are also clickable inside the figure
+        itself (the page's own handlers, same as the dashboard)."""
         subj_grid, subj_boxes = self._subject_checklist()
         mac_w = widgets.Dropdown(options=[(lbl, val) for val, lbl in MAC_OPTIONS], value=DEFAULT_MAC,
                                   layout=widgets.Layout(width="100%"))
@@ -210,49 +308,44 @@ class OpticNerveClient:
                                    layout=widgets.Layout(width="100%", height="18px", margin="0", padding="0"))
         band_w = widgets.Dropdown(options=[(lbl, val) for val, lbl in BAND_OPTIONS], value=DEFAULT_BAND,
                                    layout=widgets.Layout(width="100%", height="18px", margin="0", padding="0"))
-
-        def on_point_click(trace, points, state):
-            if not points.point_inds:
-                return
-            subj, _tok, ghost = trace.customdata[points.point_inds[0]]
-            subj_boxes[subj].value = bool(ghost)   # ghost point clicked -> re-include; live point clicked -> exclude
+        frame = self._frame('fig2', mac=DEFAULT_MAC, disc=DEFAULT_DISC, band=DEFAULT_BAND)
 
         def render(*_):
+            if muted[0]:
+                return
             exclude = ",".join(sorted(s for s, b in subj_boxes.items() if not b.value))
-            fig = self._render_into(out, 'fig2', stat=DEFAULT_STAT, mode=DEFAULT_MODE,
-                                     mac=mac_w.value, disc=disc_w.value, band=band_w.value, exclude=exclude)
-            if fig is not None:
-                for trace in fig.data:
-                    if trace.customdata is not None:
-                        trace.on_click(on_point_click)
+            self._retarget(frame, 'fig2', mac=mac_w.value, disc=disc_w.value,
+                           band=band_w.value, exclude=exclude)
 
+        muted, reset = self._resetter(render, subj_boxes, {
+            mac_w: DEFAULT_MAC, disc_w: DEFAULT_DISC, band_w: DEFAULT_BAND})
         self._observe_all(subj_boxes, render)
         mac_w.observe(render, names='value')
         disc_w.observe(render, names='value')
         band_w.observe(render, names='value')
-        render()
         panel = self._panel("Figure 2 options", [("Subjects", subj_grid), ("Macula sector", mac_w),
-                                                  ("Disc sector", disc_w), ("T1 sector", band_w)], "fig2")
-        display(widgets.HBox([out, panel]))
-        return out
+                                                  ("Disc sector", disc_w), ("T1 sector", band_w)], "fig2",
+                            on_reset=reset)
+        return self._show('fig2', frame, panel)
 
     def create_fig3_interface(self):
         """Figure 3 panel: subject exclusion and T1 sector. (No OCT-sector
         control here: unlike Figure 2, both maps' sectors are drawn together
         in fixed layout, so there's nothing for it to switch.)"""
-        out = widgets.Output()
         subj_grid, subj_boxes = self._subject_checklist()
         band_w = widgets.Dropdown(options=[(lbl, val) for val, lbl in BAND_OPTIONS], value=DEFAULT_BAND,
                                    layout=widgets.Layout(width="100%", height="18px", margin="0", padding="0"))
+        frame = self._frame('fig3', band=DEFAULT_BAND)
 
         def render(*_):
+            if muted[0]:
+                return
             exclude = ",".join(sorted(s for s, b in subj_boxes.items() if not b.value))
-            self._render_into(out, 'fig3', stat=DEFAULT_STAT, mode=DEFAULT_MODE,
-                               band=band_w.value, exclude=exclude)
+            self._retarget(frame, 'fig3', band=band_w.value, exclude=exclude)
 
+        muted, reset = self._resetter(render, subj_boxes, {band_w: DEFAULT_BAND})
         self._observe_all(subj_boxes, render)
         band_w.observe(render, names='value')
-        render()
-        panel = self._panel("Figure 3 options", [("Subjects", subj_grid), ("T1 sector", band_w)], "fig3")
-        display(widgets.HBox([out, panel]))
-        return out
+        panel = self._panel("Figure 3 options", [("Subjects", subj_grid), ("T1 sector", band_w)], "fig3",
+                            on_reset=reset)
+        return self._show('fig3', frame, panel)

@@ -1,0 +1,15 @@
+/* MyST's article theme wraps every {iframe} directive in a hardcoded 5:3 box
+   (inline padding-bottom:60%). The dashboard is wider than 5:3 — a ~48px title
+   plus a 1475x626 stage that scales to the box width — so the leftover height
+   shows as white letterbox bands between the title and the figures and at the
+   bottom. Match the box to the dashboard's real aspect instead:
+   needed height = 48px title + 16px page padding + (width - 32px) * 626/1475.
+   Scoped to the dashboard's iframe only; !important beats the inline style. */
+div:has(> iframe[src*="onrender.com"]) {
+  /* Bleed over the admonition body's 16px side padding so the dashboard spans
+     the full box width edge to edge. padding-bottom percentages resolve against
+     the parent's width (729px column), so the wider box needs a larger px term. */
+  width: calc(100% + 32px) !important;
+  margin: 0 -16px;
+  padding-bottom: calc(42.44% + 64px) !important;
+}
