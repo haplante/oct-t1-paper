@@ -134,6 +134,9 @@ display(Javascript(f"""
 #     kernel widgets, keeping the checkbox the single source of truth. The
 #     resulting kernel render pushes params the figure already has, which its
 #     receive() treats as a no-op — so this cannot loop.
+# Both directions are point-to-point: a figure only ever drives the panel in its
+# own grid, and vice versa. The three figures are independent views, each with
+# its own cohort and its own Reset.
 display(Javascript("""
 (function() {
     if (window.__onpBridge) return;
@@ -155,17 +158,25 @@ display(Javascript("""
         var d = e.data || {};
         if (!d.opticnerve || !d.params || typeof d.params.exclude !== 'string') return;
         var excl = d.params.exclude.split(',').filter(Boolean);
-        // exclude is shared by every figure (the iframes already sync it among
-        // themselves via BroadcastChannel), so mirror it into every panel.
-        document.querySelectorAll('.onp-fig-grid .onp-subjlist').forEach(function (list) {
-            list.querySelectorAll('.widget-checkbox').forEach(function (cb) {
-                var input = cb.querySelector('input');
-                // ipywidgets prefixes the label with a zero-width space, which
-                // trim() does not remove -- strip zero-width chars explicitly.
-                var subj = cb.textContent.replace(/[\\u200b-\\u200d\\ufeff]/g, '').trim();
-                var want = excl.indexOf(subj) === -1;
-                if (input && input.checked !== want) input.click();
-            });
+        // Only the panel belonging to the figure that sent this: each figure now
+        // holds its own cohort (the /figure pages no longer share a
+        // BroadcastChannel -- see app.py's ?sync=1). Matching on e.source rather
+        // than d.figid means a message from anything that is not one of our
+        // figure iframes -- the dashboard embed included -- reaches no panel.
+        var grid = null;
+        document.querySelectorAll('.onp-fig-grid').forEach(function (g) {
+            var f = g.querySelector('iframe');
+            if (f && f.contentWindow === e.source) grid = g;
+        });
+        var list = grid && grid.querySelector('.onp-subjlist');
+        if (!list) return;
+        list.querySelectorAll('.widget-checkbox').forEach(function (cb) {
+            var input = cb.querySelector('input');
+            // ipywidgets prefixes the label with a zero-width space, which
+            // trim() does not remove -- strip zero-width chars explicitly.
+            var subj = cb.textContent.replace(/[\\u200b-\\u200d\\ufeff]/g, '').trim();
+            var want = excl.indexOf(subj) === -1;
+            if (input && input.checked !== want) input.click();
         });
     });
 })();
