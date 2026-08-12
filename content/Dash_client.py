@@ -28,14 +28,15 @@ DEFAULT_BAND = 'T1_mean_015'
 # chooses display size — the render itself is always the dashboard's own.
 # Fixed px on purpose: percentage widths resolve circularly through Thebe's
 # widget wrappers and overflow the grid column. The MyST article column is a
-# fixed 765px, so every figure is 765 - panel(150+6 margin) - 10px gap - 2px
-# slack = 597: figure + panel spans the column exactly, the 2px keeps rounding
-# from raising a horizontal scrollbar.
+# fixed 765px, so every figure is 765 - panel(150+6 margin) - 0px gap - 2px
+# slack = 607: figure + panel spans the column exactly, the 2px keeps rounding
+# from raising a horizontal scrollbar. Change the gap in _show and this must
+# change with it.
 # fig2 is shorter than the others on purpose: its left subplot's y-axis title
 # draws ~10px outside the canvas (Plotly quirk, HANDOFF item 4). A shorter box
 # makes the page's contain-scale height-limited, centering the canvas with side
 # margins that give the overhanging title room instead of clipping it.
-FIG_SIZE = {"fig1": (597, 433), "fig2": (597, 256), "fig3": (597, 285)}
+FIG_SIZE = {"fig1": (607, 441), "fig2": (607, 256), "fig3": (607, 285)}
 
 # Option lists for the side panels below. Mirrors opticnerve_core.py's
 # MAC_METRICS/DISC_METRICS/T1_BANDS + NAMES/BAND_LABEL (duplicated:
@@ -71,7 +72,10 @@ _INJECTED_CSS = """
    align-self:center: the row is as tall as the taller of figure and panel, so
    when the panel wins the figure sits centered with even white bands above and
    below instead of being stuck to the top. */
-.onp-frame { overflow:hidden !important; align-self:center !important; }
+   margin:0: ipywidgets' own `.jupyter-widgets { margin:2px }` shrinks the frame's
+   border-box to 4px narrower than the iframe it holds, and the overflow:hidden
+   above then slices those 4px off the figure's right edge. */
+.onp-frame { overflow:hidden !important; align-self:center !important; margin:0 !important; }
 .onp-frame iframe { border:0; display:block; border-radius:6px; }
 /* The output area's height exactly equals the row height, so browser-zoom
    rounding can tip it into a phantom scrollbar. Class tripled because Thebe's
@@ -306,7 +310,7 @@ class OpticNerveClient:
     def _show(self, figid, frame, panel):
         # Fixed figure column + auto panel column: the two add up to the article
         # column's width (see FIG_SIZE), so the row spans the page without
-        # overflowing it. 10px gap between the figure and the panel.
+        # overflowing it. No gap: the panel sits flush against the figure.
         box = widgets.GridBox([frame, panel, frame._sync], layout=widgets.Layout(
             grid_template_columns=f"{FIG_SIZE[figid][0]}px auto",
             grid_gap="0px"))
