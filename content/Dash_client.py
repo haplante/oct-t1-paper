@@ -309,7 +309,7 @@ class OpticNerveClient:
         # overflowing it. 10px gap between the figure and the panel.
         box = widgets.GridBox([frame, panel, frame._sync], layout=widgets.Layout(
             grid_template_columns=f"{FIG_SIZE[figid][0]}px auto",
-            grid_gap="0 10px"))
+            grid_gap="0px"))
         box.add_class("onp-fig-grid")
         display(box)
         return frame
