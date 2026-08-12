@@ -26,7 +26,16 @@ DEFAULT_BAND = 'T1_mean_015'
 # On-page iframe size per figure. The /figure/<figid> page scales its native
 # canvas to fit whatever box it gets (object-fit:contain style), so this only
 # chooses display size — the render itself is always the dashboard's own.
-FIG_SIZE = {"fig1": (393, 285), "fig2": (638, 285), "fig3": (638, 285)}
+# Fixed px on purpose: percentage widths resolve circularly through Thebe's
+# widget wrappers and overflow the grid column. The MyST article column is a
+# fixed 765px, so every figure is 765 - panel(150+6 margin) - 10px gap - 2px
+# slack = 597: figure + panel spans the column exactly, the 2px keeps rounding
+# from raising a horizontal scrollbar.
+# fig2 is shorter than the others on purpose: its left subplot's y-axis title
+# draws ~10px outside the canvas (Plotly quirk, HANDOFF item 4). A shorter box
+# makes the page's contain-scale height-limited, centering the canvas with side
+# margins that give the overhanging title room instead of clipping it.
+FIG_SIZE = {"fig1": (597, 433), "fig2": (597, 256), "fig3": (597, 285)}
 
 # Option lists for the side panels below. Mirrors opticnerve_core.py's
 # MAC_METRICS/DISC_METRICS/T1_BANDS + NAMES/BAND_LABEL (duplicated:
@@ -53,18 +62,33 @@ BAND_OPTIONS = [
 # iframes and need no CSS from here.
 _INJECTED_CSS = """
 .onp-fig-grid.onp-fig-grid.onp-fig-grid { display:grid !important; align-items:stretch !important;
-             width:fit-content !important; margin-left:auto !important; margin-right:auto !important; }
+             width:fit-content !important; margin-left:auto !important; margin-right:auto !important;
+             overflow:visible !important; }
+/* Lumino sporadically inflates the frame's inner .widget-html-content past the
+   frame's fixed FIG_SIZE box (317px around a 285px iframe), which raised a
+   scrollbar on the grid. The iframe is exactly FIG_SIZE, so clipping the frame
+   to its own box loses nothing and neutralizes whatever the wrapper does.
+   align-self:center: the row is as tall as the taller of figure and panel, so
+   when the panel wins the figure sits centered with even white bands above and
+   below instead of being stuck to the top. */
+.onp-frame { overflow:hidden !important; align-self:center !important; }
 .onp-frame iframe { border:0; display:block; border-radius:6px; }
+/* The output area's height exactly equals the row height, so browser-zoom
+   rounding can tip it into a phantom scrollbar. Class tripled because Thebe's
+   own rule beats a plain !important (same fight as .onp-fig-grid below). */
+.jp-OutputArea-output.jp-OutputArea-output.jp-OutputArea-output:has(.onp-fig-grid) {
+             overflow:visible !important; }
 .onp-sync { display:none !important; }
-/* height:auto + a px min-height set inline from FIG_SIZE (see _panel). A
-   percentage min-height here fed back into the grid row's own height and, when
-   the first layout pass ran before this CSS landed (Binder), locked the row at
-   an inflated fixed point -- panels ~500px tall next to 285px figures. */
+/* No height here and none set inline (see _panel): the panel's content height is
+   its own contribution to the grid row, so the row ends up as tall as whichever
+   of figure/panel is taller and align-items:stretch grows the shorter one to
+   match. Never a percentage height -- that feeds back into the row's own height
+   and, when the first layout pass runs before this CSS lands on Binder, locks
+   the row at ~500px next to 285px figures. */
 .onp-panel { font-family:Arial,Helvetica,sans-serif; background:#fff; border:1px solid #ddd;
-             border-radius:6px; padding:6px 8px; margin:6px 6px 6px 0 !important; width:150px;
+             border-radius:6px; padding:6px 8px; margin:0 6px 0 0 !important; width:150px;
              box-sizing:border-box; overflow:hidden; gap:6px !important;
-             --jp-widgets-inline-height: 18px;
-             height:auto !important; }
+             --jp-widgets-inline-height: 18px; }
 .onp-panel > * { margin:0 !important; }
 /* Styled like the dashboard sidebar's .btnrow buttons; margin-top:auto pins it
    to the bottom of the panel with whatever breathing room is left. */
@@ -209,7 +233,7 @@ class OpticNerveClient:
         # the page scales its canvas to fit whatever box it gets.
         w.value = (f'<iframe src="{self.base_url}/figure/{figid}{self._query(params)}" '
                    f'title="OCT-T1 {figid}" '
-                   f'style="width:100%;max-width:{width}px;height:{height}px"></iframe>')
+                   f'style="width:{width}px;height:{height}px"></iframe>')
         w._sync = widgets.HTML()
         w._sync.add_class("onp-sync")
         return w
@@ -221,9 +245,9 @@ class OpticNerveClient:
         out._sync.value = (f'<span class="onp-push" data-n="{next(self._push_n)}" '
                            f'data-query="{_esc(self._query(params)[1:])}"></span>')
 
-    def _panel(self, title, rows, figid, on_reset=None):
-        """A side option panel styled like the dashboard's sidebar (the CSS
-        gives it the figure's height minus a small top/bottom inset).
+    def _panel(self, title, rows, on_reset=None):
+        """A side option panel styled like the dashboard's sidebar (the grid
+        row makes it and the figure the same height, see `_show`).
         `rows` is a list of (label, widget) pairs; `on_reset` adds a
         reset-to-defaults button pinned at the bottom."""
         tight = widgets.Layout(height="14px", margin="0", padding="0")
@@ -236,12 +260,11 @@ class OpticNerveClient:
             btn.add_class("onp-reset")
             btn.on_click(on_reset)
             children.append(btn)
-        # Explicit px min-height (figure height minus the 6px top/bottom
-        # margins): fills the figure's height like the dashboard sidebar, and
-        # unlike a percentage it cannot feed back into the grid row's height.
+        # No explicit height: the grid stretches the panel to the figure's height
+        # when it fits, and when its content is taller the row grows to the panel
+        # instead of clipping it (the figure then centers itself, see the CSS).
         box = widgets.VBox(children, layout=widgets.Layout(
-            align_items="stretch", overflow="hidden",
-            min_height=f"{FIG_SIZE[figid][1] - 12}px"))
+            align_items="stretch", overflow="hidden"))
         box.add_class("onp-panel")
         return box
 
@@ -281,11 +304,12 @@ class OpticNerveClient:
         return muted, reset
 
     def _show(self, figid, frame, panel):
-        # fig2/fig3's canvases run to their right edge, so give their panel some
-        # breathing room; fig1's canvas is letterboxed and already reads spaced.
+        # Fixed figure column + auto panel column: the two add up to the article
+        # column's width (see FIG_SIZE), so the row spans the page without
+        # overflowing it. 10px gap between the figure and the panel.
         box = widgets.GridBox([frame, panel, frame._sync], layout=widgets.Layout(
-            grid_template_columns=f"minmax(0, {FIG_SIZE[figid][0]}px) auto",
-            grid_gap="0px" if figid == "fig1" else "0 10px"))
+            grid_template_columns=f"{FIG_SIZE[figid][0]}px auto",
+            grid_gap="0 10px"))
         box.add_class("onp-fig-grid")
         display(box)
         return frame
@@ -307,7 +331,7 @@ class OpticNerveClient:
 
         muted, reset = self._resetter(render, subj_boxes, {})
         self._observe_all(subj_boxes, render)
-        panel = self._panel("Figure 1 options", [("Subjects", subj_grid)], "fig1", on_reset=reset)
+        panel = self._panel("Figure 1 options", [("Subjects", subj_grid)], on_reset=reset)
         return self._show('fig1', frame, panel)
 
     def create_fig2_interface(self):
@@ -337,7 +361,7 @@ class OpticNerveClient:
         disc_w.observe(render, names='value')
         band_w.observe(render, names='value')
         panel = self._panel("Figure 2 options", [("Subjects", subj_grid), ("Macula sector", mac_w),
-                                                  ("Disc sector", disc_w), ("T1 sector", band_w)], "fig2",
+                                                  ("Disc sector", disc_w), ("T1 sector", band_w)],
                             on_reset=reset)
         return self._show('fig2', frame, panel)
 
@@ -359,6 +383,6 @@ class OpticNerveClient:
         muted, reset = self._resetter(render, subj_boxes, {band_w: DEFAULT_BAND})
         self._observe_all(subj_boxes, render)
         band_w.observe(render, names='value')
-        panel = self._panel("Figure 3 options", [("Subjects", subj_grid), ("T1 sector", band_w)], "fig3",
+        panel = self._panel("Figure 3 options", [("Subjects", subj_grid), ("T1 sector", band_w)],
                             on_reset=reset)
         return self._show('fig3', frame, panel)
