@@ -281,8 +281,11 @@ class OpticNerveClient:
         return muted, reset
 
     def _show(self, figid, frame, panel):
+        # fig2/fig3's canvases run to their right edge, so give their panel some
+        # breathing room; fig1's canvas is letterboxed and already reads spaced.
         box = widgets.GridBox([frame, panel, frame._sync], layout=widgets.Layout(
-            grid_template_columns=f"minmax(0, {FIG_SIZE[figid][0]}px) auto"))
+            grid_template_columns=f"minmax(0, {FIG_SIZE[figid][0]}px) auto",
+            grid_gap="0px" if figid == "fig1" else "0 10px"))
         box.add_class("onp-fig-grid")
         display(box)
         return frame
