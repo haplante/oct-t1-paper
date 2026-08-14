@@ -13,14 +13,14 @@ Optical coherence tomography (OCT) robustly measures retinal ganglion cell (RGC)
 
 :::: {important} OCT-T₁ interactive dashboard
 
-:::{iframe} https://oct-T₁-dashboard.onrender.com
+:::{iframe} https://oct-t1.db.neurolibre.org
 :width: 100%
 :align: center
 :enumerated: false
 
 :::
 
-{button}`Open in new tab <https://oct-T₁-dashboard.onrender.com>`
+{button}`Open in new tab <https://oct-t1.db.neurolibre.org>`
 
 ::::
 

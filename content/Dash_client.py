@@ -187,7 +187,7 @@ class OpticNerveClient:
     """Embeds the dashboard's standalone /figure/<figid> pages, driven by an
     ipywidgets option panel styled like the dashboard's sidebar."""
 
-    def __init__(self, base_url="https://oct-t1-dashboard.onrender.com"):
+    def __init__(self, base_url="https://oct-t1.db.neurolibre.org"):
         self.base_url = base_url
         self._subjects = None
         self._push_n = itertools.count()

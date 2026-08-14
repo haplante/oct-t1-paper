@@ -5,7 +5,7 @@
    bottom. Match the box to the dashboard's real aspect instead:
    needed height = 48px title + 16px page padding + (width - 32px) * 626/1475.
    Scoped to the dashboard's iframe only; !important beats the inline style. */
-div:has(> iframe[src*="onrender.com"]):not(:has(> iframe[src*="/figure/"])) {
+div:has(> iframe[src*="db.neurolibre.org"]):not(:has(> iframe[src*="/figure/"])) {
   /* Bleed over the admonition body's 16px side padding so the dashboard spans
      the full box width edge to edge. padding-bottom percentages resolve against
      the parent's width (729px column), so the wider box needs a larger px term. */
