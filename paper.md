@@ -198,5 +198,3 @@ Large language models (LLMs), including Claude and ChatGPT, were used in the pre
 # Acknowledgements
 
 This work was supported by the NYUAD Research Institute Center for Brain and Health, funded by Tamkeen under NYU Abu Dhabi Research Institute grant CG012; the Fonds de Recherche du Québec – Santé (Grant/Award Numbers: 28826; FRSQ-35250); the Natural Sciences and Engineering Research Council of Canada (Grant/Award Number: RGPIN-2022-05308); and the Fonds de recherche du Québec through a CRSNG undergraduate scholarship supplement (Application number: 377291; DOI: [10.69777/377291](https://doi.org/10.69777/377291)); and the Montréal Heart Institute Foundation.
-
-# References
