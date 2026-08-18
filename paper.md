@@ -1,5 +1,5 @@
 ---
-title: 'Strong coupling of retinal thickness and optic nerve T₁ in vivo'
+title: 'Strong Coupling of Retinal Thickness and Optic Nerve Myelin in Vivo'
 numbering:
   heading_1: false
   heading_2: false
