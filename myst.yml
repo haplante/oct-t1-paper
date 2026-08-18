@@ -22,7 +22,7 @@ project:
       twitter: agahkarakuzu
       url: https://agah.dev
     - name: Ameen Qadi
-      orcid: 0000-0000-0000-0000
+      orcid: 0009-0002-9571-0111
       email: ameenqadi05@gmail.com
       affiliations: psychologynyuabudhabi; centerbrainhealthnyuabudhabi
     - name: Mathieu Boudreau
@@ -31,7 +31,7 @@ project:
       email: mathieu.boudreau@polymtl.ca
       github: mathieuboudreau
     - name: Namrata Bangera
-      orcid: 0000-0000-0000-0000
+      orcid: 0009-0006-0875-9291
       email: nb4131@nyu.edu
       affiliations: psychologynyuabudhabi; centerbrainhealthnyuabudhabi
     - name: Abraiz Azhar
@@ -39,15 +39,16 @@ project:
       email: mk7592@nyu.edu
       affiliations: psychologynyuabudhabi; centerbrainhealthnyuabudhabi
     - name: Morane Bienvenu
+      orcid: 0009-0005-7487-1567
       affiliations: polymtl
-      email: morane-cecile.bienvenu@etud.polymtl.ca
+      email: morane-cecile.bienvenu@etud.polymtl.ca      
     - name: Bas Rokers
-      orcid: 0000-0000-0000-0000
+      orcid: 0000-0003-0573-5332
       email: br87@nyu.edu
       affiliations: psychologynyuabudhabi; centerbrainhealthnyuabudhabi
     - name: Nikola Stikov
       orcid: 0000-0002-8480-5230
-      email: stikov@gmail.com
+      email: nikola.stikov@polymtl.ca
       affiliations: polymtl; mhi; macedonia
   affiliations:
     - id: polymtl
