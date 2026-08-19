@@ -146,3 +146,4 @@ site:
     favicon: static/favicon.ico # Production will override this for branding.
     logo: static/logo.png # Production will override this for branding.
     style: static/custom.css # Sizes the dashboard iframe's box to the dashboard's aspect.
+    numbered_references: true
