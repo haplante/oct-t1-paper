@@ -63,10 +63,10 @@ project:
       postal_code: H3T 1J4
       phone: 1 (514) 340-4711
     - id: psychologynyuabudhabi
-      institution: Psychology, New York University Abu Dhabi
+      institution: New York University Abu Dhabi
       ror: https://ror.org/00e5k0821
       isni: 0000 0004 1755 5934
-      department: Psychology
+      department: Department of Psychology
       address: Saadiyat Marina District
       city: Abu Dhabi
       country: United Arab Emirates
